@@ -3,15 +3,27 @@ from google import genai
 import re 
 from flask_sqlalchemy import SQLAlchemy 
 from werkzeug.security import generate_password_hash , check_password_hash 
-
+import os 
 
 
 app = Flask(__name__) 
-client = genai.Client(api_key="AIzaSyBX25rXs4AbIzdY_k0Ehf0UP8C_P5m_WJc")
 
 
-app.secret_key = "sjnsknkbdslkbddsdvbvvkjvdsv" 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Med_29072003@localhost/pfe_app'
+
+DB_PASSWORD = os.getenv("DB_PASSWORD") 
+API_KEY = os.getenv("GEMINI_API_KEY") 
+SECRET_KEY = os.getenv("SECRET_KEY") 
+
+
+if not DB_PASSWORD or not API_KEY or not SECRET_KEY : 
+    print("cannot find parameters") 
+    exit(0)
+
+
+client = genai.Client(api_key=API_KEY)
+
+app.secret_key = SECRET_KEY
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://root:{DB_PASSWORD}@localhost/pfe_app'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app) 
 
